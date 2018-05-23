@@ -60,7 +60,7 @@ class ControllerModuleZevioo extends Controller
 			$log->write('Order info: ' . print_r($order, true));
 			
 			$first_name = $order['payment_firstname'];
-        	$last_name 	= $order['payment_lastname'];
+        	$last_name 	= substr($order['payment_lastname'],0,1);
         	$email 		= $order['email'];
 			
 			$products = $this->model_account_order->getOrderProducts($order_id);
@@ -122,109 +122,6 @@ class ControllerModuleZevioo extends Controller
 			
 			$log->write($message);
 	}
-	/*
-	function eventAddOrder($order_id) {
-			$log = new Log('zevioo.log');
-			$log->write('eventAddOrder Event fired: #' . $order_id);
-			
-			$this->load->model('checkout/order');
-			$this->load->model('account/order');
-			$this->load->model('tool/image');
-			$this->load->model('catalog/product');
-
-			$order = $this->model_checkout_order->getOrder($order_id);
-			$log->write('Order info: ' . print_r($order, true));
-			
-			$first_name = $order['payment_firstname'];
-        	$last_name 	= $order['payment_lastname'];
-        	$email 		= $order['email'];
-			
-			$products = $this->model_account_order->getOrderProducts($order_id);
-			$log->write('Products: ' . print_r($products, true));
-			foreach ($products as $product)
-			{
-				$product_info = $this->model_catalog_product->getProduct($product['product_id']);
-				
-				$image = '';
-				if ($product_info['image']) {
-					$image = $this->model_tool_image->resize($product_info['image'], $this->config->get('config_image_popup_width'), $this->config->get('config_image_popup_height'));
-				}
-
-				$EAN = '';
-				if($product_info['ean'] != ''){
-					$EAN = $product_info['ean'];
-				} else if($product_info['upc'] != ''){
-					$EAN = $product_info['upc'];
-				} else if($product_info['sku'] != ''){
-					$EAN = $product_info['sku'];
-				} else if($product_info['model'] != ''){
-					$EAN = $product_info['model'];
-				} else {
-					$EAN = $product_info['product_id'];
-				}
-				$product_item = array(
-					'CD' => $product_info['product_id'],
-					'EAN' => $EAN,
-					'NM' => $product['name'],
-					'IMG' => $image,
-					'PRC' => $product['price'],
-					'QTY' => $product['quantity']
-				);
-	
-				$products_array[] = $product_item;
-			}
-			
-			$orderData = array(
-				'USR' => $this->config->get('module_zevioo_username'),
-				'PSW' => $this->config->get('module_zevioo_password'),
-				'OID' => $order['order_id'],
-				'PDT' => date('Y-m-d H:i:s'),
-				'DDT' => '',
-				'EML' => $email,
-				'FN' => $first_name,
-				'LN' => $last_name,
-				'ITEMS' => $products_array
-			);
-			
-			$log->write('Zevioo new order request: ' . print_r($orderData, true));
-			$returnData  = array('http_status'=>'', 'data'=>'');
-			//$returnData = $this->apiPostRequest($this->service_new_order_url, $orderData);
-			
-			if($returnData['http_status'] == '200'){
-				$message = "Success Send New Order: ". print_r($returnData['data'], true);
-			} else {
-				$message = "Error Send New Order: ". print_r($returnData['data'], true);
-			}
-			
-			$log->write($message);
-	}
-	
-	function eventEditOrder($order_id){
-		$this->load->model('checkout/order');
-		$log = new Log('zevioo.log');
-		$log->write('eventEditOrder Event fired: #' . $order_id);
-		
-		$order = $this->model_checkout_order->getOrder($order_id);
-		if($order['order_status_id'] == $this->config->get('module_zevioo_canceled_status_id')){
-			$orderData = array(
-									'USR' => $this->config->get('module_zevioo_username'),
-									'PSW' => $this->config->get('module_zevioo_password'),
-									'OID' => $order['order_id'],
-									'CDT' => date('Y-m-d H:i:s')
-							);
-			$log->write('Zevioo cancel request: ' . print_r($orderData, true));
-			$returnData  = array('http_status'=>'', 'data'=>'');
-			$returnData = $this->apiPostRequest($this->service_cancel_order_url, $orderData);
-					
-			if($returnData['http_status'] == '200'){
-				$message = "Success Cancel Order: ". print_r($returnData['data'], true);
-			} else {
-				$message = "Error Cancel Order: ". print_r($returnData['data'], true);
-			}
-					
-			$log->write($message);
-		}
-	}*/
 	
 	function apiPostRequest($url, $postData){
         $ch = curl_init($url);
